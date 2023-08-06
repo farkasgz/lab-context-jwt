@@ -1,11 +1,28 @@
 import { Box, Button, PasswordInput, Text, TextInput } from '@mantine/core'
+import { useState } from 'react'
 
 const LoginPage = () => {
   // Add some states to control your inputs
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
-  const handleSubmit = event => {
+  const handleLogin = async (event) => {
     event.preventDefault()
     // Send your login information to your backend
+    try {
+      const response = await fetch("http://localhost:5005/auth/login",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, password}),
+      })
+      const parsed = await response.json()
+      localStorage.setItem("authToken", parsed.token);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -25,10 +42,16 @@ const LoginPage = () => {
       <Box
         component='form'
         sx={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '2rem' }}
-        onSubmit={handleSubmit}
+        onSubmit={handleLogin}
       >
-        <TextInput label='Username' variant='filled' withAsterisk />
-        <PasswordInput label='Password' variant='filled' withAsterisk />
+        <TextInput label='Username' variant='filled' withAsterisk 
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+        />
+        <PasswordInput label='Password' variant='filled' withAsterisk 
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
         <Button
           type='submit'
           variant='filled'

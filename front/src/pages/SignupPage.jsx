@@ -1,11 +1,36 @@
 import { Box, Button, PasswordInput, Text, TextInput } from '@mantine/core'
+import { useState } from 'react'
 
 const SignupPage = () => {
   // Add some states to control your inputs
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  const handleSubmit = event => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     // Send your signup information to your backend
+    try {
+      const response = await fetch("http://localhost:5005/auth/signup",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({username, email, password}),
+      }
+      )
+      if(response.status === 201){
+        const parsed = await response.json()
+        console.log(parsed)
+        setUsername('')
+        setEmail('')
+        setPassword('')
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -27,8 +52,16 @@ const SignupPage = () => {
         sx={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '2rem' }}
         onSubmit={handleSubmit}
       >
-        <TextInput label='Username' variant='filled' withAsterisk />
-        <PasswordInput label='Password' variant='filled' withAsterisk />
+        <TextInput label='Username' variant='filled' withAsterisk 
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+        />
+        <TextInput label='Email' variant='filled' withAsterisk 
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}/>
+        <PasswordInput label='Password' variant='filled' withAsterisk 
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}/>
         <Button
           type='submit'
           variant='filled'
