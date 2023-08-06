@@ -18,6 +18,9 @@ const indexRoutes = require('./routes/index.routes')
 /* Don't forget that you can use your middleware here to protect all your api routes at once */
 app.use('/api', indexRoutes)
 
+const authRoutes = require('./routes/auth.routes')
+app.use('/auth', authRoutes)
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require('./error-handling')(app)
 
